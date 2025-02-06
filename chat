@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetroArch Web Player</title>
+    <script>
+        async function loadRetroArch() {
+            const script = document.createElement("script");
+            script.src = "https://web.retroarch.com/retroarch.js";
+            document.body.appendChild(script);
+            script.onload = () => {
+                console.log("RetroArch loaded");
+            };
+        }
+        
+        async function loadROM(url) {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const file = new File([blob], "game.rom");
+            window.retroarch_drop_event([file]);
+        }
+        
+        function saveState() {
+            window.Module.callMain(['-s']);
+        }
+
+        function loadState() {
+            window.Module.callMain(['-l']);
+        }
+    </script>
+</head>
+<body onload="loadRetroArch()">
+    <h1>RetroArch Web Player</h1>
+    <input type="text" id="romUrl" placeholder="Enter GitHub raw ROM URL">
+    <button onclick="loadROM(document.getElementById('romUrl').value)">Load ROM</button>
+    <button onclick="saveState()">Save State</button>
+    <button onclick="loadState()">Load State</button>
+</body>
+</html>
